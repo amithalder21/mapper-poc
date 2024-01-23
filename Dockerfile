@@ -5,21 +5,23 @@ FROM amazonlinux:2
 MAINTAINER Amit Halder
 
 # Install required packages
-RUN yum -y update && \
-    yum -y install python3 git && \
-    curl "https://d1vvhvl2y92vvt.cloudfront.net/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+RUN /bin/bash -c 'yum -y update && \
+    yum -y install python3 unzip git && \
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
     unzip awscliv2.zip && \
-    sudo ./aws/install && \
-    rm -rf awscliv2.zip ./aws && \
-    yum clean all
+    ./aws/install && \
+    rm -rf awscliv2.zip ./aws'
 
 # Install other dependencies
-RUN yum -y install autoconf automake libtool python3-dev
+RUN yum -y install autoconf automake libtool python3-dev make gcc python3-devel ruby
+RUN yum -y install python3-pip
+
 
 # Clone CloudMapper repository and install requirements
-RUN git clone https://github.com/duo-labs/cloudmapper.git && \
+RUN git clone https://github.com/amithalder21/cloudmapper.git && \
     cd cloudmapper/ && \
-    pip3 install -r requirements.txt
+    python3 -m pip install -r requirements.txt || (echo "Error cloning or installing dependencies"; exit 1)
+
 
 WORKDIR /cloudmapper/
 
