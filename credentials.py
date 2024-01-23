@@ -23,7 +23,7 @@ account_id = "$CLIENT_ACCOUNT_ID"
 
 # Write the credentials to a file named "credentials" in the current directory
 with open('credentials', 'w') as credentials_file:
-    credentials_file.write(f"[{account_id}]\n")
+    credentials_file.write(f"[default]\n")
     credentials_file.write(f"aws_access_key_id = {access_key_id}\n")
     credentials_file.write(f"aws_secret_access_key = {secret_access_key}\n")
     credentials_file.write(f"aws_session_token = {session_token}\n")
