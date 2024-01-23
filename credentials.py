@@ -21,6 +21,13 @@ account_id = "$CLIENT_ACCOUNT_ID"
 #subprocess.check_output(['aws', 'sts', 'get-caller-identity', '--output', 'json']).decode('utf-8')
 #account_id = json.loads(account_id)['Account']
 
+# Write the credentials to a file named "credentials" in the current directory
+with open('credentials', 'w') as credentials_file:
+    credentials_file.write(f"[{account_id}]\n")
+    credentials_file.write(f"aws_access_key_id = {access_key_id}\n")
+    credentials_file.write(f"aws_secret_access_key = {secret_access_key}\n")
+    credentials_file.write(f"aws_session_token = {session_token}\n")
+
 # Configure AWS CLI with extracted values for the new profile
 subprocess.run(['aws', 'configure', '--profile', account_id, 'set', 'aws_access_key_id', access_key_id])
 subprocess.run(['aws', 'configure', '--profile', account_id, 'set', 'aws_secret_access_key', secret_access_key])
