@@ -31,8 +31,8 @@ COPY config.json config.json
 
 # Run CloudMapper commands
 RUN python3 cloudmapper.py collect --config config.json && \
-    python3 cloudmapper.py prepare --config config.json && \
-    python3 cloudmapper.py report --config config.json
+    python3 cloudmapper.py prepare --config config.json --account "$CLIENT_EXTERNAL_ID" && \
+    python3 cloudmapper.py report --config config.json --account "$CLIENT_EXTERNAL_ID"
 
 # Set entrypoint for CloudMapper webserver
 ENTRYPOINT ["python3", "cloudmapper.py", "webserver", "--public"]
