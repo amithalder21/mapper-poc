@@ -1,0 +1,44 @@
+# Dockerfile for clomplaince
+
+FROM amazonlinux:2
+
+MAINTAINER Amit Halder
+
+# Install required packages
+RUN /bin/bash -c 'yum -y update && \
+    yum -y install python3 unzip git && \
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+    unzip awscliv2.zip && \
+    ./aws/install && \
+    rm -rf awscliv2.zip ./aws'
+
+# Install other dependencies
+RUN /bin/bash -c 'yum -y install gcc openssl-devel bzip2-devel libffi-devel wget &&\
+    wget https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz && \
+    tar xzf Python-3.9.0.tgz && \
+    cd Python-3.9.0 && \
+    ./configure --enable-optimizations && \
+    make && \
+    make altinstall'
+
+
+# Copy necessary files
+WORKDIR /compliance
+
+# Copy credentials and config file
+COPY credentials /root/.aws/credentials
+COPY config.json config.json
+
+# Install dependencies
+ENV HOME='/home/prowler'
+ENV PATH="$HOME/.local/bin:$PATH"
+#hadolint ignore=DL3013
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir .
+
+# Remove Prowler directory and build files
+USER 0
+RUN rm -rf /home/prowler/prowler /home/prowler/pyproject.toml /home/prowler/README.md /home/prowler/build /home/prowler/prowler.egg-info
+
+USER prowler
+ENTRYPOINT ["prowler"]
